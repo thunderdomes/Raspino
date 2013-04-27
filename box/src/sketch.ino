@@ -1,32 +1,28 @@
-#include <DHT.h>
-#define DHTPIN 7
-#define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE);
-void setup()
+int led = 13;  //Output pin
+int inter_trigger = 1;  //Input pin 2 (for interrupts) - Note that not all pins have hardware interrupts
+volatile int state = LOW;  // Input state toggle
+
+int count = 0;
+
+void setup() 
 {
- 
-  
-  
-  Serial.begin(9600);
-  //Serial.println("Booting..");
-  dht.begin();
-  
+  Serial.begin(9600); //Initialize serial communications at 9600 bps
+  pinMode(led, OUTPUT);
+  attachInterrupt(inter_trigger, triggered_event, RISING);  // Interrupt called on rising signal from 'trigger' pin
 }
 
-void loop()
+void loop() 
 {
-  // Read values from dht11 sensor
-  float humidity = dht.readHumidity();
-  float temperature = dht.readTemperature();
-  //Print temperatures
-  // check if returns are valid, if they are NaN , output error.
-  if (isnan (temperature) || isnan (humidity)) {
-          Serial.println("Failed to read from dht");
-  } else {
-    Serial.print(humidity);
-    Serial.print("*");
-    Serial.print(temperature);
-    Serial.println("*");
-         
+  for (int i = 0; i<1; i++)
+  {
+    delay(100);
   }
+  Serial.println(count);
+}
+
+void triggered_event()
+{
+  count = count + 1;
+  state = !state;
+  digitalWrite(led, state);
 }
